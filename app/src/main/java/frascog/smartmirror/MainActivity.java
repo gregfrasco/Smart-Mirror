@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import frascog.smartmirror.Modules.Forecast;
+import frascog.smartmirror.Modules.Transit;
+import frascog.smartmirror.Transit.TransitTime;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -29,7 +31,7 @@ import frascog.smartmirror.Modules.Forecast;
 public class MainActivity extends AppCompatActivity {
 
     private Forecast forecast;
-
+    private Transit transit;
 
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -116,7 +118,11 @@ public class MainActivity extends AppCompatActivity {
         if(mintue < 10){
             mintues = "0"+mintues;
         }
-        timeText.setText(c.get(Calendar.HOUR) + ":" + mintues);
+        int hour = c.get(Calendar.HOUR);
+        if(hour == 0){
+            hour = 12;
+        }
+        timeText.setText(hour + ":" + mintues);
         //Date
         Date date = c.getTime();
         String dayOfWeek = new SimpleDateFormat("EEEE", Locale.ENGLISH).format(date.getTime());
@@ -125,6 +131,9 @@ public class MainActivity extends AppCompatActivity {
         dayOfWeek += " " + c.get(Calendar.DAY_OF_MONTH);
         TextView dateText = (TextView) findViewById(R.id.date);
         dateText.setText(dayOfWeek);
+        //Transit
+        this.transit = new Transit(this,this);
+        this.transit.getTransit();
 
         mVisible = false;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
@@ -225,5 +234,16 @@ public class MainActivity extends AppCompatActivity {
         } else {
             bike.setText("Try Taking the T");
         }
+    }
+
+    public void setTransitTimes(TransitTime transitTimes) {
+        TextView massAve1 = (TextView) findViewById(R.id.MassAve1);
+        massAve1.setText("Forest Hills\t" + Integer.parseInt(transitTimes.massAveOutbound)/60 + "min");
+        TextView massAve2 = (TextView) findViewById(R.id.MassAve2);
+        massAve2.setText("Oak Grove\t" + Integer.parseInt(transitTimes.massAveInbound)/60 + "min");
+        TextView sym1 = (TextView) findViewById(R.id.Sym1);
+        sym1.setText("Heath Street\t" + Integer.parseInt(transitTimes.symphonyOutbound)/60 + "min");
+        TextView sym2 = (TextView) findViewById(R.id.Sym2);
+        sym2.setText("Lechmere\t" + Integer.parseInt(transitTimes.symphonyInbound)/60 + "min");
     }
 }
