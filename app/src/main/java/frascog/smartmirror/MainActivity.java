@@ -1,18 +1,36 @@
 package frascog.smartmirror;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
+import frascog.smartmirror.Modules.Forecast;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class MainActivity extends AppCompatActivity {
+
+    private Forecast forecast;
+
+
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -87,6 +105,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Forecast
+        this.forecast = new Forecast(this,this);
+        this.forecast.getForcast();
+        //Time
+        TextView timeText = (TextView) findViewById(R.id.time);
+        Calendar c = Calendar.getInstance();
+        timeText.setText(c.get(Calendar.HOUR) + ":" + c.get(Calendar.MINUTE));
+        //Date
+        Date date = c.getTime();
+        String dayOfWeek = new SimpleDateFormat("EEEE", Locale.ENGLISH).format(date.getTime());
+        SimpleDateFormat month_date = new SimpleDateFormat("MMMM");
+        dayOfWeek += " " + month_date.format(c.getTime());
+        dayOfWeek += " " + c.get(Calendar.DAY_OF_MONTH);
+        TextView dateText = (TextView) findViewById(R.id.date);
+        dateText.setText(dayOfWeek);
+
         mVisible = false;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
@@ -157,5 +191,25 @@ public class MainActivity extends AppCompatActivity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    public void setTemperature(String degrees) {
+        TextView temperature = (TextView) findViewById(R.id.temperature);
+        temperature.setText(degrees);
+    }
+
+    public void setIcon(Drawable icon) {
+        ImageView imageView = (ImageView) findViewById(R.id.weatherIcon);
+        imageView.setImageDrawable(icon);
+    }
+
+    public void setSummary(String summarytext) {
+        TextView summary = (TextView) findViewById(R.id.weatherSummary);
+        summary.setText(summarytext);
+    }
+
+    public void setPrecipitation(String precipitation) {
+        TextView rain = (TextView) findViewById(R.id.precipitation);
+        rain.setText(precipitation);
     }
 }

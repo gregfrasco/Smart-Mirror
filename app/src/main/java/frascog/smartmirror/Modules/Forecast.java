@@ -1,6 +1,10 @@
 package frascog.smartmirror.Modules;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
@@ -13,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import frascog.smartmirror.MainActivity;
+import frascog.smartmirror.R;
 import frascog.smartmirror.Weather.Weather;
 
 /**
@@ -22,20 +27,65 @@ public class Forecast {
 
     private final String API = "https://api.forecast.io/forecast/";
     private final String KEY = "bf6243fc7b46c22e5baf4ae4dc0fd109/";
-    private double longitude = 37.8267;
-    private double latitude = -122.423;
+    private double longitude = 42.338608099999995;
+    private double latitude = -71.0821618;
 
-    private MainActivity activity;
+    private Context context;
+    private MainActivity mainActivity;
     private Weather weather;
+
+    public Forecast(Context context,MainActivity mainActivity) {
+        this.context = context;
+        this.mainActivity = mainActivity;
+
+    }
 
     public void getForcast(){
         new ForecastTask().execute();
+    }
 
+    public String getTemperature() {
+        return ((int)weather.getCurrently().getTemperature()) + "°";
+    }
+
+    public Drawable getIcon() {
+        Drawable drawable = null;
+        switch (weather.getCurrently().getIcon()){
+            case "clear-day" :
+                drawable = this.context.getResources().getDrawable(R.drawable.weatherclear);
+            case "clear-night":
+                drawable = this.context.getResources().getDrawable(R.drawable.weatherclearnight);
+            case "rain":
+                drawable = this.context.getResources().getDrawable(R.drawable.weatherdrizzleday);
+            case "snow":
+                drawable = this.context.getResources().getDrawable(R.drawable.weatherbigsnow);
+            case "sleet":
+                drawable = this.context.getResources().getDrawable(R.drawable.weathersnowrain);
+            case "wind":
+                drawable = this.context.getResources().getDrawable(R.drawable.weatherwind);
+            case "fog":
+                drawable = this.context.getResources().getDrawable(R.drawable.weatherhaze);
+            case "cloudy":
+                drawable = this.context.getResources().getDrawable(R.drawable.weathercloudsnight);
+            case "partly-cloudy-day":
+                drawable = this.context.getResources().getDrawable(R.drawable.weatherfewclouds);
+            case "partly-cloudy-night":
+                drawable = this.context.getResources().getDrawable(R.drawable.weatherfewcloudsnight);
+        }
+        return new BitmapDrawable(this.context.getResources(), Bitmap.createScaledBitmap(((BitmapDrawable) drawable).getBitmap(), 200, 200, true));
+    }
+
+    public String getSummary() {
+        return this.weather.getDaily().getSummary();
+    }
+
+    public String getPrecipitation() {
+        return this.weather.getCurrently().getPrecipProbability()+"%";
     }
 
     private class ForecastTask extends AsyncTask<String, Integer, Boolean> {
 
-        private final ProgressDialog dialog = new ProgressDialog(Forecast.this.activity);
+        private final ProgressDialog dialog = new ProgressDialog(Forecast.this.context);
 
         public ForecastTask() {
         }
@@ -67,7 +117,10 @@ public class Forecast {
                 this.dialog.dismiss();
             }
             if(weather != null){
-
+                Forecast.this.mainActivity.setTemperature(Forecast.this.getTemperature());
+                Forecast.this.mainActivity.setIcon(Forecast.this.getIcon());
+                Forecast.this.mainActivity.setSummary(Forecast.this.getSummary());
+                Forecast.this.mainActivity.setPrecipitation(Forecast.this.getPrecipitation());
             } else {
 
             }

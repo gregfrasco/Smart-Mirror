@@ -40,7 +40,7 @@ public class Datum_ {
     private int windBearing;
     @SerializedName("visibility")
     @Expose
-    private int visibility;
+    private double visibility;
     @SerializedName("cloudCover")
     @Expose
     private double cloudCover;
@@ -76,7 +76,7 @@ public class Datum_ {
      * @param windBearing
      * @param precipProbability
      */
-    public Datum_(int time, String summary, String icon, int precipIntensity, int precipProbability, double temperature, double apparentTemperature, double dewPoint, double humidity, double windSpeed, int windBearing, int visibility, double cloudCover, double pressure, double ozone) {
+    public Datum_(int time, String summary, String icon, int precipIntensity, int precipProbability, double temperature, double apparentTemperature, double dewPoint, double humidity, double windSpeed, int windBearing, double visibility, double cloudCover, double pressure, double ozone) {
         this.time = time;
         this.summary = summary;
         this.icon = icon;
@@ -352,7 +352,7 @@ public class Datum_ {
      * @return
      *     The visibility
      */
-    public int getVisibility() {
+    public double getVisibility() {
         return visibility;
     }
 
@@ -361,7 +361,7 @@ public class Datum_ {
      * @param visibility
      *     The visibility
      */
-    public void setVisibility(int visibility) {
+    public void setVisibility(double visibility) {
         this.visibility = visibility;
     }
 

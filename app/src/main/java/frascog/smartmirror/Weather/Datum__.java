@@ -76,7 +76,7 @@ public class Datum__ {
     private int windBearing;
     @SerializedName("visibility")
     @Expose
-    private int visibility;
+    private double visibility;
     @SerializedName("cloudCover")
     @Expose
     private double cloudCover;
@@ -124,7 +124,7 @@ public class Datum__ {
      * @param apparentTemperatureMin
      * @param temperatureMax
      */
-    public Datum__(int time, String summary, String icon, int sunriseTime, int sunsetTime, double moonPhase, double precipIntensity, double precipIntensityMax, int precipIntensityMaxTime, double precipProbability, String precipType, double temperatureMin, int temperatureMinTime, double temperatureMax, int temperatureMaxTime, double apparentTemperatureMin, int apparentTemperatureMinTime, double apparentTemperatureMax, int apparentTemperatureMaxTime, double dewPoint, double humidity, double windSpeed, int windBearing, int visibility, double cloudCover, double pressure, double ozone) {
+    public Datum__(int time, String summary, String icon, int sunriseTime, int sunsetTime, double moonPhase, double precipIntensity, double precipIntensityMax, int precipIntensityMaxTime, double precipProbability, String precipType, double temperatureMin, int temperatureMinTime, double temperatureMax, int temperatureMaxTime, double apparentTemperatureMin, int apparentTemperatureMinTime, double apparentTemperatureMax, int apparentTemperatureMaxTime, double dewPoint, double humidity, double windSpeed, int windBearing, double visibility, double cloudCover, double pressure, double ozone) {
         this.time = time;
         this.summary = summary;
         this.icon = icon;
@@ -688,7 +688,7 @@ public class Datum__ {
      * @return
      *     The visibility
      */
-    public int getVisibility() {
+    public double getVisibility() {
         return visibility;
     }
 
@@ -697,7 +697,7 @@ public class Datum__ {
      * @param visibility
      *     The visibility
      */
-    public void setVisibility(int visibility) {
+    public void setVisibility(double visibility) {
         this.visibility = visibility;
     }
 
