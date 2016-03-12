@@ -217,4 +217,13 @@ public class MainActivity extends AppCompatActivity {
         TextView rain = (TextView) findViewById(R.id.precipitation);
         rain.setText(precipitation);
     }
+
+    public void setBike(boolean shouldBike) {
+        TextView bike = (TextView) findViewById(R.id.bike);
+        if(shouldBike){
+            bike.setText("Looks Nice Out Today");
+        } else {
+            bike.setText("Try Taking the T");
+        }
+    }
 }

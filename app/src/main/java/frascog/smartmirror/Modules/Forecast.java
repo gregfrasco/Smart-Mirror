@@ -15,9 +15,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 
 import frascog.smartmirror.MainActivity;
 import frascog.smartmirror.R;
+import frascog.smartmirror.Weather.Datum_;
 import frascog.smartmirror.Weather.Weather;
 
 /**
@@ -93,6 +95,17 @@ public class Forecast {
         return this.weather.getCurrently().getPrecipProbability()+"%";
     }
 
+    public boolean canBike(){
+        boolean bike = true;
+        for(Datum_ hour :this.weather.getHourly().getData()){
+            if(hour.getPrecipProbability() >= 0.3 || hour.getTemperature() <= 50){
+                bike = false;
+                break;
+            }
+        }
+        return bike;
+    }
+
     private class ForecastTask extends AsyncTask<String, Integer, Boolean> {
 
         private final ProgressDialog dialog = new ProgressDialog(Forecast.this.context);
@@ -131,6 +144,7 @@ public class Forecast {
                 Forecast.this.mainActivity.setIcon(Forecast.this.getIcon());
                 Forecast.this.mainActivity.setSummary(Forecast.this.getSummary());
                 Forecast.this.mainActivity.setPrecipitation(Forecast.this.getPrecipitation());
+                Forecast.this.mainActivity.setBike(Forecast.this.canBike());
             } else {
 
             }
