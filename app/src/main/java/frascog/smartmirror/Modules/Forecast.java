@@ -53,24 +53,34 @@ public class Forecast {
         switch (weather.getCurrently().getIcon()){
             case "clear-day" :
                 drawable = this.context.getResources().getDrawable(R.drawable.weatherclear);
+                break;
             case "clear-night":
                 drawable = this.context.getResources().getDrawable(R.drawable.weatherclearnight);
+                break;
             case "rain":
                 drawable = this.context.getResources().getDrawable(R.drawable.weatherdrizzleday);
+                break;
             case "snow":
                 drawable = this.context.getResources().getDrawable(R.drawable.weatherbigsnow);
+                break;
             case "sleet":
                 drawable = this.context.getResources().getDrawable(R.drawable.weathersnowrain);
+                break;
             case "wind":
                 drawable = this.context.getResources().getDrawable(R.drawable.weatherwind);
+                break;
             case "fog":
                 drawable = this.context.getResources().getDrawable(R.drawable.weatherhaze);
+                break;
             case "cloudy":
                 drawable = this.context.getResources().getDrawable(R.drawable.weathercloudsnight);
+                break;
             case "partly-cloudy-day":
                 drawable = this.context.getResources().getDrawable(R.drawable.weatherfewclouds);
+                break;
             case "partly-cloudy-night":
                 drawable = this.context.getResources().getDrawable(R.drawable.weatherfewcloudsnight);
+                break;
         }
         return new BitmapDrawable(this.context.getResources(), Bitmap.createScaledBitmap(((BitmapDrawable) drawable).getBitmap(), 200, 200, true));
     }
