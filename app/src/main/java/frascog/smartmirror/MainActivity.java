@@ -111,7 +111,12 @@ public class MainActivity extends AppCompatActivity {
         //Time
         TextView timeText = (TextView) findViewById(R.id.time);
         Calendar c = Calendar.getInstance();
-        timeText.setText(c.get(Calendar.HOUR) + ":" + c.get(Calendar.MINUTE));
+        int mintue = c.get(Calendar.MINUTE);
+        String mintues = mintue + "";
+        if(mintue < 10){
+            mintues = "0"+mintues;
+        }
+        timeText.setText(c.get(Calendar.HOUR) + ":" + mintues);
         //Date
         Date date = c.getTime();
         String dayOfWeek = new SimpleDateFormat("EEEE", Locale.ENGLISH).format(date.getTime());
