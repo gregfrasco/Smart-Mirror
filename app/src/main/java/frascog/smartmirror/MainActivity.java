@@ -246,4 +246,9 @@ public class MainActivity extends AppCompatActivity {
         TextView sym2 = (TextView) findViewById(R.id.Sym2);
         sym2.setText("Lechmere\t" + Integer.parseInt(transitTimes.symphonyInbound)/60 + "min");
     }
+
+    public void onUpdate(View view){
+        this.forecast.getForcast();
+        this.transit.getTransit();
+    }
 }

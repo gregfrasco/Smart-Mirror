@@ -10,10 +10,10 @@ public class Datum {
     private int time;
     @SerializedName("precipIntensity")
     @Expose
-    private int precipIntensity;
+    private double precipIntensity;
     @SerializedName("precipProbability")
     @Expose
-    private int precipProbability;
+    private double precipProbability;
 
     /**
      * No args constructor for use in serialization
@@ -62,7 +62,7 @@ public class Datum {
      * @return
      *     The precipIntensity
      */
-    public int getPrecipIntensity() {
+    public double getPrecipIntensity() {
         return precipIntensity;
     }
 
@@ -71,7 +71,7 @@ public class Datum {
      * @param precipIntensity
      *     The precipIntensity
      */
-    public void setPrecipIntensity(int precipIntensity) {
+    public void setPrecipIntensity(double precipIntensity) {
         this.precipIntensity = precipIntensity;
     }
 
@@ -85,7 +85,7 @@ public class Datum {
      * @return
      *     The precipProbability
      */
-    public int getPrecipProbability() {
+    public double getPrecipProbability() {
         return precipProbability;
     }
 
@@ -94,7 +94,7 @@ public class Datum {
      * @param precipProbability
      *     The precipProbability
      */
-    public void setPrecipProbability(int precipProbability) {
+    public void setPrecipProbability(double precipProbability) {
         this.precipProbability = precipProbability;
     }
 
