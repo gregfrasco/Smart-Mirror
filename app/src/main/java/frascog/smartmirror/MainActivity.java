@@ -19,7 +19,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import frascog.smartmirror.Modules.Clock;
 import frascog.smartmirror.Modules.Forecast;
 import frascog.smartmirror.Modules.Transit;
 import frascog.smartmirror.Transit.TransitTime;
@@ -109,32 +112,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //Forecast
         this.forecast = new Forecast(this,this);
-        this.forecast.getForcast();
-        //Time
-        TextView timeText = (TextView) findViewById(R.id.time);
-        Calendar c = Calendar.getInstance();
-        int mintue = c.get(Calendar.MINUTE);
-        String mintues = mintue + "";
-        if(mintue < 10){
-            mintues = "0"+mintues;
-        }
-        int hour = c.get(Calendar.HOUR);
-        if(hour == 0){
-            hour = 12;
-        }
-        timeText.setText(hour + ":" + mintues);
-        //Date
-        Date date = c.getTime();
-        String dayOfWeek = new SimpleDateFormat("EEEE", Locale.ENGLISH).format(date.getTime());
-        SimpleDateFormat month_date = new SimpleDateFormat("MMMM");
-        dayOfWeek += " " + month_date.format(c.getTime());
-        dayOfWeek += " " + c.get(Calendar.DAY_OF_MONTH);
-        TextView dateText = (TextView) findViewById(R.id.date);
-        dateText.setText(dayOfWeek);
         //Transit
         this.transit = new Transit(this,this);
         this.transit.getTransit();
-
+        //Clock
+        Clock clock = new Clock(this);
+        //Full Screen
         mVisible = false;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
@@ -245,6 +228,30 @@ public class MainActivity extends AppCompatActivity {
         sym1.setText("Heath Street\t" + Integer.parseInt(transitTimes.symphonyOutbound)/60 + "min");
         TextView sym2 = (TextView) findViewById(R.id.Sym2);
         sym2.setText("Lechmere\t" + Integer.parseInt(transitTimes.symphonyInbound)/60 + "min");
+    }
+
+    public void updateTime(){
+        //Time
+        TextView timeText = (TextView) findViewById(R.id.time);
+        Calendar c = Calendar.getInstance();
+        int mintue = c.get(Calendar.MINUTE);
+        String mintues = mintue + "";
+        if(mintue < 10){
+            mintues = "0"+mintues;
+        }
+        int hour = c.get(Calendar.HOUR);
+        if(hour == 0){
+            hour = 12;
+        }
+        timeText.setText(hour + ":" + mintues);
+        //Date
+        Date date = c.getTime();
+        String dayOfWeek = new SimpleDateFormat("EEEE", Locale.ENGLISH).format(date.getTime());
+        SimpleDateFormat month_date = new SimpleDateFormat("MMMM");
+        dayOfWeek += " " + month_date.format(c.getTime());
+        dayOfWeek += " " + c.get(Calendar.DAY_OF_MONTH);
+        TextView dateText = (TextView) findViewById(R.id.date);
+        dateText.setText(dayOfWeek);
     }
 
     public void onUpdate(View view){
