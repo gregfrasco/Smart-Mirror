@@ -2,8 +2,13 @@ package frascog.smartmirror;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -12,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -114,9 +120,10 @@ public class MainActivity extends AppCompatActivity {
         this.forecast = new Forecast(this,this);
         //Transit
         this.transit = new Transit(this,this);
-        this.transit.getTransit();
         //Clock
         Clock clock = new Clock(this);
+        //Start
+        this.stopTasks();
         //Full Screen
         mVisible = false;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
@@ -198,6 +205,7 @@ public class MainActivity extends AppCompatActivity {
     public void setIcon(Drawable icon) {
         ImageView imageView = (ImageView) findViewById(R.id.weatherIcon);
         imageView.setImageDrawable(icon);
+        imageView.setVisibility(View.VISIBLE);
     }
 
     public void setSummary(String summarytext) {
@@ -208,6 +216,8 @@ public class MainActivity extends AppCompatActivity {
     public void setPrecipitation(String precipitation) {
         TextView rain = (TextView) findViewById(R.id.precipitation);
         rain.setText(precipitation);
+        ImageView umbrella = (ImageView) findViewById(R.id.umbrella);
+        umbrella.setVisibility(View.VISIBLE);
     }
 
     public void setBike(boolean shouldBike) {
@@ -217,17 +227,58 @@ public class MainActivity extends AppCompatActivity {
         } else {
             bike.setText("Try Taking the T");
         }
+        ImageView umbrella = (ImageView) findViewById(R.id.bikeIcon);
+        umbrella.setVisibility(View.VISIBLE);
     }
 
     public void setTransitTimes(TransitTime transitTimes) {
         TextView massAve1 = (TextView) findViewById(R.id.MassAve1);
-        massAve1.setText("Forest Hills\t" + Integer.parseInt(transitTimes.massAveOutbound)/60 + "min");
+        if(transitTimes.massAveOutbound.equals("No Train Info")){
+            massAve1.setText("Forest Hills\t" + "No Data");
+        } else {
+            massAve1.setText("Forest Hills\t" + (Integer.parseInt(transitTimes.massAveOutbound) / 60 + 1) + " min");
+        }
+
         TextView massAve2 = (TextView) findViewById(R.id.MassAve2);
-        massAve2.setText("Oak Grove\t" + Integer.parseInt(transitTimes.massAveInbound)/60 + "min");
+        if(transitTimes.massAveInbound.equals("No Train Info")){
+            massAve2.setText("Oak Grove\t" + "No Data");
+        } else {
+            massAve2.setText("Oak Grove\t" + (Integer.parseInt(transitTimes.massAveInbound)/60 + 1) + " min");
+        }
+
         TextView sym1 = (TextView) findViewById(R.id.Sym1);
-        sym1.setText("Heath Street\t" + Integer.parseInt(transitTimes.symphonyOutbound)/60 + "min");
+        if(transitTimes.symphonyOutbound.equals("No Train Info")){
+            sym1.setText("Heath Street\t" + "No Data");
+        } else {
+            sym1.setText("Heath Street\t" + (Integer.parseInt(transitTimes.symphonyOutbound)/60 + 1) + " min");
+        }
+
         TextView sym2 = (TextView) findViewById(R.id.Sym2);
-        sym2.setText("Lechmere\t" + Integer.parseInt(transitTimes.symphonyInbound)/60 + "min");
+        if(transitTimes.symphonyOutbound.equals("No Train Info")){
+            sym2.setText("Lechmere\t" + "No Data");
+        } else {
+            sym2.setText("Lechmere\t" + (Integer.parseInt(transitTimes.symphonyInbound)/60  + 1) + " min");
+        }
+
+        ImageView img1 = (ImageView) findViewById(R.id.MassAve);
+        img1.setVisibility(View.VISIBLE);
+        ImageView img2 = (ImageView) findViewById(R.id.tram);
+        img2.setVisibility(View.VISIBLE);
+    }
+
+    public void clearTransitTimes(){
+        TextView massAve1 = (TextView) findViewById(R.id.MassAve1);
+        massAve1.setText("");
+        TextView massAve2 = (TextView) findViewById(R.id.MassAve2);
+        massAve2.setText("");
+        TextView sym1 = (TextView) findViewById(R.id.Sym1);
+        sym1.setText("");
+        TextView sym2 = (TextView) findViewById(R.id.Sym2);
+        sym2.setText("");
+        ImageView img1 = (ImageView) findViewById(R.id.MassAve);
+        img1.setVisibility(View.GONE);
+        ImageView img2 = (ImageView) findViewById(R.id.tram);
+        img2.setVisibility(View.GONE);
     }
 
     public void updateTime(){
@@ -252,10 +303,44 @@ public class MainActivity extends AppCompatActivity {
         dayOfWeek += " " + c.get(Calendar.DAY_OF_MONTH);
         TextView dateText = (TextView) findViewById(R.id.date);
         dateText.setText(dayOfWeek);
+        startandstopTasks(c);
+    }
+
+    private void startandstopTasks(Calendar c) {
+        if((c.get(Calendar.AM_PM) == 1) && (c.get(Calendar.HOUR)+1 > 11)) {
+            stopTasks();
+        } else if(c.get(Calendar.HOUR)+1 > 6){
+            startTasks();
+        }
+
     }
 
     public void onUpdate(View view){
         this.forecast.getForcast();
         this.transit.getTransit();
+    }
+
+    private void startTasks(){
+        this.forecast.start();
+        this.transit.start();
+    }
+
+    private void stopTasks(){
+        this.transit.stop();
+        this.forecast.stop();
+    }
+
+    public void clearforcast() {
+        setTemperature("");
+        setPrecipitation("");
+        setSummary("");
+        TextView bike = (TextView) findViewById(R.id.bike);
+        bike.setText("");
+        ImageView weather = (ImageView) findViewById(R.id.weatherIcon);
+        weather.setVisibility(View.GONE);
+        ImageView umbrella = (ImageView) findViewById(R.id.umbrella);
+        umbrella.setVisibility(View.GONE);
+        ImageView bikeIcon = (ImageView) findViewById(R.id.bikeIcon);
+        bikeIcon.setVisibility(View.GONE);
     }
 }

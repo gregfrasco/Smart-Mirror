@@ -34,21 +34,54 @@ public class Transit {
     private final String mbtaAPI = "http://realtime.mbta.com/developer/api/v2/";
     private final String apiKey = "?api_key=RpDBj89zSU6aOljozJLfpg";
     private final String format = "&format=json";
+    private Thread thread;
+    private boolean running;
 
     private TransitTime transitTimes = new TransitTime();
 
     public Transit(Context context, MainActivity mainActivity) {
         this.context = context;
         this.mainActivity = mainActivity;
+        this.start();
+    }
+
+    public void update() {
+        this.thread = new Thread(){
+            @Override
+            public void run() {
+                try {
+                    while (running) {
+                        Thread.sleep(30000);
+                        mainActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Transit.this.getTransit();
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+        thread.start();
     }
 
     public void getTransit() {
         new TransitTask().execute();
     }
 
-    private class TransitTask extends AsyncTask<String, Integer, Boolean> {
+    public void stop() {
+        this.running = false;
+        this.mainActivity.clearTransitTimes();
+    }
 
-        private final ProgressDialog dialog = new ProgressDialog(Transit.this.context);
+    public void start(){
+        this.running = true;
+        this.getTransit();
+        this.update();
+    }
+
+    private class TransitTask extends AsyncTask<String, Integer, Boolean> {
 
         private String symphonyOutbound = "70241";
         private String symphonyInbound  = "70242";
@@ -61,10 +94,6 @@ public class Transit {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            this.dialog.setMessage("Getting Transit Data...");
-            this.dialog.setIndeterminate(true);
-            this.dialog.setCancelable(false);
-            this.dialog.show();
         }
 
         @Override
@@ -80,10 +109,6 @@ public class Transit {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            //Close the loading dialog
-            if (this.dialog.isShowing()) {
-                this.dialog.dismiss();
-            }
             if(transitTimes != null){
                 Transit.this.mainActivity.setTransitTimes(Transit.this.transitTimes);
             } else {
@@ -121,9 +146,15 @@ public class Transit {
                 String apiResult = run(mbtaAPI + "predictionsbystop" + apiKey + "&stop=" + stationID + format);
                 Gson gson = new Gson();
                 PredictionsByStop predictionsByStop = gson.fromJson(apiResult, PredictionsByStop.class);
-                return predictionsByStop.getMode().get(0).getRoute().get(0).getDirection().get(0).getTrip().get(0).getPreAway();
+                String seconds = predictionsByStop.getMode().get(0).getRoute().get(0).getDirection().get(0).getTrip().get(0).getPreAway();
+                    if(Integer.parseInt(seconds) < 120){
+                    if(predictionsByStop.getMode().get(0).getRoute().get(0).getDirection().get(0).getTrip().size() > 2){
+                        seconds = predictionsByStop.getMode().get(0).getRoute().get(0).getDirection().get(0).getTrip().get(1).getPreAway();
+                    }
+                }
+                return seconds;
             } catch (IndexOutOfBoundsException e){
-                return "0";
+                return "No Train Info";
             }
         }
 

@@ -20,6 +20,7 @@ import java.util.Date;
 import frascog.smartmirror.MainActivity;
 import frascog.smartmirror.R;
 import frascog.smartmirror.Weather.Datum_;
+import frascog.smartmirror.Weather.Datum__;
 import frascog.smartmirror.Weather.Weather;
 
 /**
@@ -31,6 +32,8 @@ public class Forecast {
     private final String KEY = "bf6243fc7b46c22e5baf4ae4dc0fd109/";
     private double longitude = 42.338608099999995;
     private double latitude = -71.0821618;
+    private Thread thread;
+    private boolean running;
 
     private Context context;
     private MainActivity mainActivity;
@@ -39,7 +42,29 @@ public class Forecast {
     public Forecast(Context context,MainActivity mainActivity) {
         this.context = context;
         this.mainActivity = mainActivity;
+        this.getForcast();
+        this.update();
+    }
 
+    public void update() {
+        this.thread = new Thread(){
+            @Override
+            public void run() {
+                try {
+                    while (running) {
+                        Thread.sleep(120000);
+                        mainActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Forecast.this.getForcast();
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+        thread.start();
     }
 
     public void getForcast(){
@@ -88,11 +113,17 @@ public class Forecast {
     }
 
     public String getSummary() {
-        return this.weather.getDaily().getSummary();
+        return "Currently " + this.weather.getCurrently().getSummary() + "\n" + this.weather.getDaily().getSummary();
     }
 
     public String getPrecipitation() {
-        return this.weather.getCurrently().getPrecipProbability()+"%";
+        double precipitation = 0;
+        for(Datum__ data: this.weather.getDaily().getData()){
+            if(precipitation < data.getPrecipProbability()){
+                precipitation = data.getPrecipProbability();
+            }
+        }
+        return new Double(precipitation).intValue() + "%";
     }
 
     public boolean canBike(){
@@ -106,39 +137,32 @@ public class Forecast {
         return bike;
     }
 
+    public void stop() {
+        this.running = false;
+        this.mainActivity.clearforcast();
+    }
+
+    public void start(){
+        this.running = true;
+        this.getForcast();
+        this.update();
+    }
+
     private class ForecastTask extends AsyncTask<String, Integer, Boolean> {
-
-        private final ProgressDialog dialog = new ProgressDialog(Forecast.this.context);
-
-        public ForecastTask() {
-        }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            this.dialog.setMessage("Getting Weather...");
-            this.dialog.setIndeterminate(true);
-            this.dialog.setCancelable(false);
-            this.dialog.show();
         }
 
         @Override
         protected Boolean doInBackground(String... params) {
-            try {
-                Thread.sleep(0);
-                getWeather();
-            } catch (InterruptedException e) {
-                return false;
-            }
+            getWeather();
             return true;
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
-            //Close the loading dialog
-            if (this.dialog.isShowing()) {
-                this.dialog.dismiss();
-            }
             if(weather != null){
                 Forecast.this.mainActivity.setTemperature(Forecast.this.getTemperature());
                 Forecast.this.mainActivity.setIcon(Forecast.this.getIcon());
@@ -180,5 +204,6 @@ public class Forecast {
             }
             return results.toString();
         }
+
     }
 }
