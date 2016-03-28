@@ -32,7 +32,7 @@ public class Transit {
     private MainActivity mainActivity;
 
     private final String mbtaAPI = "http://realtime.mbta.com/developer/api/v2/";
-    private final String apiKey = "?api_key=RpDBj89zSU6aOljozJLfpg";
+    private final String apiKey = "?api_key=lxzqGfe9OUWHBR9elGklBg";
     private final String format = "&format=json";
     private Thread thread;
     private boolean running;
@@ -146,13 +146,16 @@ public class Transit {
                 String apiResult = run(mbtaAPI + "predictionsbystop" + apiKey + "&stop=" + stationID + format);
                 Gson gson = new Gson();
                 PredictionsByStop predictionsByStop = gson.fromJson(apiResult, PredictionsByStop.class);
-                String seconds = predictionsByStop.getMode().get(0).getRoute().get(0).getDirection().get(0).getTrip().get(0).getPreAway();
-                    if(Integer.parseInt(seconds) < 120){
-                    if(predictionsByStop.getMode().get(0).getRoute().get(0).getDirection().get(0).getTrip().size() > 2){
-                        seconds = predictionsByStop.getMode().get(0).getRoute().get(0).getDirection().get(0).getTrip().get(1).getPreAway();
+                if(predictionsByStop != null) {
+                    String seconds = predictionsByStop.getMode().get(0).getRoute().get(0).getDirection().get(0).getTrip().get(0).getPreAway();
+                    if (Integer.parseInt(seconds) < 120) {
+                        if (predictionsByStop.getMode().get(0).getRoute().get(0).getDirection().get(0).getTrip().size() > 2) {
+                            seconds = predictionsByStop.getMode().get(0).getRoute().get(0).getDirection().get(0).getTrip().get(1).getPreAway();
+                        }
                     }
+                    return seconds;
                 }
-                return seconds;
+                return "No Train Info";
             } catch (IndexOutOfBoundsException e){
                 return "No Train Info";
             }
