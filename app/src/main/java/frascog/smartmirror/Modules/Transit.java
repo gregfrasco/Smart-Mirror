@@ -3,6 +3,7 @@ package frascog.smartmirror.Modules;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -34,51 +35,28 @@ public class Transit {
     private final String mbtaAPI = "http://realtime.mbta.com/developer/api/v2/";
     private final String apiKey = "?api_key=lxzqGfe9OUWHBR9elGklBg";
     private final String format = "&format=json";
-    private Thread thread;
-    private boolean running;
+    private boolean runnable = false;
+    private long timeDelay = 9000;
 
     private TransitTime transitTimes = new TransitTime();
 
     public Transit(Context context, MainActivity mainActivity) {
         this.context = context;
         this.mainActivity = mainActivity;
-        this.start();
-    }
-
-    public void update() {
-        this.thread = new Thread(){
-            @Override
-            public void run() {
-                try {
-                    while (running) {
-                        Thread.sleep(30000);
-                        mainActivity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Transit.this.getTransit();
-                            }
-                        });
-                    }
-                } catch (InterruptedException e) {
-                }
-            }
-        };
-        thread.start();
     }
 
     public void getTransit() {
         new TransitTask().execute();
     }
 
-    public void stop() {
-        this.running = false;
-        this.mainActivity.clearTransitTimes();
+    public void start(){
+        this.runnable = true;
+        this.getTransit();
     }
 
-    public void start(){
-        this.running = true;
-        this.getTransit();
-        this.update();
+    public void stop(){
+        this.runnable = false;
+        this.mainActivity.clearTransitTimes();
     }
 
     private class TransitTask extends AsyncTask<String, Integer, Boolean> {
@@ -97,13 +75,9 @@ public class Transit {
         }
 
         @Override
-        protected Boolean doInBackground(String... params) {
-            try {
-                Thread.sleep(0);
-                getTransit();
-            } catch (InterruptedException e) {
-                return false;
-            }
+        protected Boolean doInBackground(String... params) {;
+            getTransit();
+            Log.v("Transit","Get Transit");
             return true;
         }
 
@@ -113,6 +87,14 @@ public class Transit {
                 Transit.this.mainActivity.setTransitTimes(Transit.this.transitTimes);
             } else {
 
+            }
+            if(runnable){
+                try {
+                    Thread.sleep(timeDelay);
+                    getTransit();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

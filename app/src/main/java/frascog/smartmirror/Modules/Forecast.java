@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -16,6 +18,8 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import frascog.smartmirror.MainActivity;
 import frascog.smartmirror.R;
@@ -32,39 +36,26 @@ public class Forecast {
     private final String KEY = "bf6243fc7b46c22e5baf4ae4dc0fd109/";
     private double longitude = 42.338608099999995;
     private double latitude = -71.0821618;
-    private Thread thread;
-    private boolean running;
+    private long timeDelay = 90000;
 
     private Context context;
     private MainActivity mainActivity;
     private Weather weather;
+    private boolean runnable;
 
     public Forecast(Context context,MainActivity mainActivity) {
         this.context = context;
         this.mainActivity = mainActivity;
-        this.getForcast();
-        this.update();
     }
 
-    public void update() {
-        this.thread = new Thread(){
-            @Override
-            public void run() {
-                try {
-                    while (running) {
-                        Thread.sleep(120000);
-                        mainActivity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Forecast.this.getForcast();
-                            }
-                        });
-                    }
-                } catch (InterruptedException e) {
-                }
-            }
-        };
-        thread.start();
+    public void start(){
+        this.runnable = true;
+        this.getForcast();
+    }
+
+    public void stop(){
+        this.runnable = false;
+        this.mainActivity.clearforcast();
     }
 
     public void getForcast(){
@@ -137,17 +128,6 @@ public class Forecast {
         return bike;
     }
 
-    public void stop() {
-        this.running = false;
-        this.mainActivity.clearforcast();
-    }
-
-    public void start(){
-        this.running = true;
-        this.getForcast();
-        this.update();
-    }
-
     private class ForecastTask extends AsyncTask<String, Integer, Boolean> {
 
         @Override
@@ -169,8 +149,17 @@ public class Forecast {
                 Forecast.this.mainActivity.setSummary(Forecast.this.getSummary());
                 Forecast.this.mainActivity.setPrecipitation(Forecast.this.getPrecipitation());
                 Forecast.this.mainActivity.setBike(Forecast.this.canBike());
+                Log.v("Forcast","Updated Forcast");
             } else {
 
+            }
+            if(runnable){
+                try {
+                    Thread.sleep(timeDelay);
+                    getForcast();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

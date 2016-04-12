@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         //Clock
         Clock clock = new Clock(this);
         //Start
-        this.stopTasks();
+        this.startTasks();
         //Full Screen
         mVisible = false;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
@@ -313,11 +313,6 @@ public class MainActivity extends AppCompatActivity {
             startTasks();
         }
 
-    }
-
-    public void onUpdate(View view){
-        this.forecast.getForcast();
-        this.transit.getTransit();
     }
 
     private void startTasks(){
