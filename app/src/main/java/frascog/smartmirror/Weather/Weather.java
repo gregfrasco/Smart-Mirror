@@ -2,9 +2,12 @@ package frascog.smartmirror.Weather;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+
 import frascog.smartmirror.Weather.*;
 
-public class Weather {
+public class Weather implements Serializable {
 
     @SerializedName("latitude")
     @Expose

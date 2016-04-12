@@ -3,7 +3,9 @@ package frascog.smartmirror.Weather;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Datum__ {
+import java.io.Serializable;
+
+public class Datum__ implements Serializable {
 
     @SerializedName("time")
     @Expose

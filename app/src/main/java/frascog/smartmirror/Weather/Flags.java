@@ -1,11 +1,12 @@
 package frascog.smartmirror.Weather;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Flags {
+public class Flags implements Serializable {
 
     @SerializedName("sources")
     @Expose

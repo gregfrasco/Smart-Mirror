@@ -5,6 +5,8 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -31,6 +33,8 @@ import java.util.TimerTask;
 import frascog.smartmirror.Modules.Clock;
 import frascog.smartmirror.Modules.Forecast;
 import frascog.smartmirror.Modules.Transit;
+import frascog.smartmirror.Receivers.ForecastReceiver;
+import frascog.smartmirror.Serivces.ForecastService;
 import frascog.smartmirror.Transit.TransitTime;
 
 /**
@@ -39,9 +43,7 @@ import frascog.smartmirror.Transit.TransitTime;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private Forecast forecast;
-    private Transit transit;
-
+    private ForecastReceiver forecastReceiver;
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -90,58 +92,33 @@ public class MainActivity extends AppCompatActivity {
             mControlsView.setVisibility(View.VISIBLE);
         }
     };
-    private boolean mVisible;
+
     private final Runnable mHideRunnable = new Runnable() {
         @Override
         public void run() {
             hide();
         }
     };
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            return false;
-        }
-    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Forecast
-        this.forecast = new Forecast(this,this);
-        //Transit
-        this.transit = new Transit(this,this);
         //Clock
         Clock clock = new Clock(this);
-        //Start
-        this.startTasks();
         //Full Screen
-        mVisible = false;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
 
-
-        // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
-            }
-        });
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+        //Receivers
+        IntentFilter filter = new IntentFilter(ForecastReceiver.ACTION_RESP);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        forecastReceiver = new ForecastReceiver(this);
+        registerReceiver(forecastReceiver,filter);
+        //Service
+        Intent forecastIntent = new Intent(this, ForecastService.class);
+        startService(forecastIntent);
     }
 
     @Override
@@ -154,13 +131,6 @@ public class MainActivity extends AppCompatActivity {
         delayedHide(100);
     }
 
-    private void toggle() {
-        if (mVisible) {
-            hide();
-        } else {
-            show();
-        }
-    }
 
     private void hide() {
         // Hide UI first
@@ -169,23 +139,9 @@ public class MainActivity extends AppCompatActivity {
             actionBar.hide();
         }
         mControlsView.setVisibility(View.GONE);
-        mVisible = false;
-
         // Schedule a runnable to remove the status and navigation bar after a delay
         mHideHandler.removeCallbacks(mShowPart2Runnable);
         mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
-    }
-
-    @SuppressLint("InlinedApi")
-    private void show() {
-        // Show the system bar
-        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        mVisible = true;
-
-        // Schedule a runnable to display UI elements after a delay
-        mHideHandler.removeCallbacks(mHidePart2Runnable);
-        mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
     }
 
     /**
@@ -197,39 +153,6 @@ public class MainActivity extends AppCompatActivity {
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
-    public void setTemperature(String degrees) {
-        TextView temperature = (TextView) findViewById(R.id.temperature);
-        temperature.setText(degrees);
-    }
-
-    public void setIcon(Drawable icon) {
-        ImageView imageView = (ImageView) findViewById(R.id.weatherIcon);
-        imageView.setImageDrawable(icon);
-        imageView.setVisibility(View.VISIBLE);
-    }
-
-    public void setSummary(String summarytext) {
-        TextView summary = (TextView) findViewById(R.id.weatherSummary);
-        summary.setText(summarytext);
-    }
-
-    public void setPrecipitation(String precipitation) {
-        TextView rain = (TextView) findViewById(R.id.precipitation);
-        rain.setText(precipitation);
-        ImageView umbrella = (ImageView) findViewById(R.id.umbrella);
-        umbrella.setVisibility(View.VISIBLE);
-    }
-
-    public void setBike(boolean shouldBike) {
-        TextView bike = (TextView) findViewById(R.id.bike);
-        if(shouldBike){
-            bike.setText("Looks Nice Out Today");
-        } else {
-            bike.setText("Try Taking the T");
-        }
-        ImageView umbrella = (ImageView) findViewById(R.id.bikeIcon);
-        umbrella.setVisibility(View.VISIBLE);
-    }
 
     public void setTransitTimes(TransitTime transitTimes) {
         TextView massAve1 = (TextView) findViewById(R.id.MassAve1);
@@ -308,34 +231,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void startandstopTasks(Calendar c) {
         if((c.get(Calendar.AM_PM) == 1) && (c.get(Calendar.HOUR)+1 > 11)) {
-            stopTasks();
+            //stopTasks();
         } else if(c.get(Calendar.HOUR)+1 > 6){
-            startTasks();
+            //startTasks();
         }
-
-    }
-
-    private void startTasks(){
-        this.forecast.start();
-        this.transit.start();
-    }
-
-    private void stopTasks(){
-        this.transit.stop();
-        this.forecast.stop();
-    }
-
-    public void clearforcast() {
-        setTemperature("");
-        setPrecipitation("");
-        setSummary("");
-        TextView bike = (TextView) findViewById(R.id.bike);
-        bike.setText("");
-        ImageView weather = (ImageView) findViewById(R.id.weatherIcon);
-        weather.setVisibility(View.GONE);
-        ImageView umbrella = (ImageView) findViewById(R.id.umbrella);
-        umbrella.setVisibility(View.GONE);
-        ImageView bikeIcon = (ImageView) findViewById(R.id.bikeIcon);
-        bikeIcon.setVisibility(View.GONE);
     }
 }

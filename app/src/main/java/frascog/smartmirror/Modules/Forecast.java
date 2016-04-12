@@ -32,34 +32,12 @@ import frascog.smartmirror.Weather.Weather;
  */
 public class Forecast {
 
-    private final String API = "https://api.forecast.io/forecast/";
-    private final String KEY = "bf6243fc7b46c22e5baf4ae4dc0fd109/";
-    private double longitude = 42.338608099999995;
-    private double latitude = -71.0821618;
-    private long timeDelay = 90000;
-
-    private Context context;
-    private MainActivity mainActivity;
     private Weather weather;
-    private boolean runnable;
+    private Context context;
 
-    public Forecast(Context context,MainActivity mainActivity) {
+    public Forecast(Weather weather,Context context) {
+        this.weather = weather;
         this.context = context;
-        this.mainActivity = mainActivity;
-    }
-
-    public void start(){
-        this.runnable = true;
-        this.getForcast();
-    }
-
-    public void stop(){
-        this.runnable = false;
-        this.mainActivity.clearforcast();
-    }
-
-    public void getForcast(){
-        new ForecastTask().execute();
     }
 
     public String getTemperature() {
@@ -110,8 +88,9 @@ public class Forecast {
     public String getPrecipitation() {
         double precipitation = 0;
         for(Datum__ data: this.weather.getDaily().getData()){
-            if(precipitation < data.getPrecipProbability()){
-                precipitation = data.getPrecipProbability();
+            int newValue = (int) (data.getPrecipProbability() * 100);
+            if(precipitation < newValue){
+                precipitation = newValue;
             }
         }
         return new Double(precipitation).intValue() + "%";
@@ -126,73 +105,5 @@ public class Forecast {
             }
         }
         return bike;
-    }
-
-    private class ForecastTask extends AsyncTask<String, Integer, Boolean> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Boolean doInBackground(String... params) {
-            getWeather();
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            if(weather != null){
-                Forecast.this.mainActivity.setTemperature(Forecast.this.getTemperature());
-                Forecast.this.mainActivity.setIcon(Forecast.this.getIcon());
-                Forecast.this.mainActivity.setSummary(Forecast.this.getSummary());
-                Forecast.this.mainActivity.setPrecipitation(Forecast.this.getPrecipitation());
-                Forecast.this.mainActivity.setBike(Forecast.this.canBike());
-                Log.v("Forcast","Updated Forcast");
-            } else {
-
-            }
-            if(runnable){
-                try {
-                    Thread.sleep(timeDelay);
-                    getForcast();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        public void getWeather() {
-            String apiResult = run(API + KEY + longitude + "," + latitude);
-            Gson gson = new Gson();
-            Forecast.this.weather = gson.fromJson(apiResult, Weather.class);
-        }
-
-        public String run(String query) {
-            InputStream is = null;
-            StringBuilder results = new StringBuilder();
-            try {
-                URL url = new URL(query);
-                is = url.openStream();  // throws an IOException
-                BufferedReader br = new BufferedReader(new InputStreamReader(is));
-                String line;
-                while ((line = br.readLine()) != null) {
-                    results.append(line);
-                }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (is != null) is.close();
-                } catch (IOException ioe) {
-                    // nothing to see here
-                }
-            }
-            return results.toString();
-        }
-
     }
 }
