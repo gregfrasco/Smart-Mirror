@@ -21,7 +21,6 @@ import frascog.smartmirror.Weather.Weather;
 public class ForecastReceiver extends BroadcastReceiver {
 
     public static final String ACTION_RESP = "forecast.MESSAGE_PROCESSED";
-    private final long delay = 90000;
     private MainActivity mainActivity;
     private Weather weather;
 
@@ -40,9 +39,6 @@ public class ForecastReceiver extends BroadcastReceiver {
             setPrecipitation(forecast.getPrecipitation());
             setBike(forecast.canBike());
             Log.v("Forcast", "Updated Forcast");
-            try {
-                Thread.sleep(delay);
-            } catch (InterruptedException e) {}
             Intent forecastIntent = new Intent(mainActivity, ForecastService.class);
             mainActivity.startService(forecastIntent);
         }

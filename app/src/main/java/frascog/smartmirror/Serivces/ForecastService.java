@@ -25,6 +25,7 @@ public class ForecastService extends IntentService {
     private final String KEY = "bf6243fc7b46c22e5baf4ae4dc0fd109/";
     private double longitude = 42.338608099999995;
     private double latitude = -71.0821618;
+    private final long delay = 90000;
 
 
     private Weather weather;
@@ -35,6 +36,9 @@ public class ForecastService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {}
         this.getWeather();
         this.update();
     }
