@@ -22,9 +22,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service
-            android:name=".Serivces.ForecastService"
-            android:exported="false"/>
+        <service android:name=".Serivces.ForecastService" />
+        <service android:name=".Serivces.TransitService" />
     </application>
 
 </manifest>
