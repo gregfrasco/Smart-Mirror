@@ -21,26 +21,41 @@
 <body>
 	<div class="container header-bg">
 		<nav class="navbar">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="#"><b><font face="Helvetica" color="white"><h2>Smart Mirror</h2></font></b><small><font face="Calibri" color="white">By Greg Frasco</font></small></a>
-    </div>
-    <ul class="nav navbar-nav navbar pull-right">
-      <li><a href="#"><font face="Helvetica" color="white">About</font></a></li>
-      <li><a href="#"><font face="Helvetica" color="white">Gallery</font></a></li>
-    </ul>
-  </div>
-</nav>
-</div>
-		<div class="jumbotron">
-			<div class="container">
-				<!--
-				<h1>Elliott Davidson</h1>
-				<p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
-				<p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
-			-->
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#"><b><font face="Helvetica" color="white"><h2>Smart Mirror</h2></font></b><small><font face="Calibri" color="white">By Greg Frasco</font></small></a>
+				</div>
+				<ul class="nav navbar-nav navbar pull-right">
+					<li><a href="#"><font face="Helvetica" color="white">About</font></a></li>
+					<li><a href="#"><font face="Helvetica" color="white">Gallery</font></a></li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+	<div class="row">
+		<div class="col-md-5">
+			<img src="images/mirror2.png" class="img-responsive"/>
+		</div>
+		<div class="col-md-7">
+			<div class="container-fluid">
+				<h2>Weather</h2>
+				<hr />
+				<p>The Weather Module includes the current temperature, forecast icon, forecast status, the weeks' status, the participation percentage, and if it's ok to bike today.</p>
 			</div>
 		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-7">
+			<div class="container-fluid">
+				<h2>Time and Transit</h2>
+				<hr />
+				<p>The Time and Transit Module includes the time and date and the local transit time. The transit times comes from the Massachusetts Bay Transit Authority (MBTA) RESTful API to get the two closest stations and there trains arrival times.</p>
+			</div>
+		</div>
+		<div class="col-md-5">
+			<img src="images/mirror3.png" class="img-responsive"/>
+		</div>
+	</div>
 	<style>
 	.header-bg {
 		width:100%;
@@ -51,8 +66,8 @@
 	}
 
 	.transparent {
-	background: none;
-}
+		background: none;
+	}
 
 	.jumbotron {
 		color: white;
