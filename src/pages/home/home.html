@@ -1,17 +1,25 @@
 <ion-content class="background">
   <ion-grid>
     <ion-row padding>
-      <ion-col width-10 class="center">
-          <img src="{{weather.getIcon()}}" />
-          <h2>{{weather.getTemp()}}</h2>
+      <ion-col width-50>
+        <ion-row>
+          <ion-col width-25 class="center">
+              <img src="{{weather.getIcon()}}" />
+              <h2>{{weather.getTemp()}}</h2>
+          </ion-col>
+          <ion-col width-75>
+            <h4>Currently it is {{weather.getCurrently()}}</h4>
+            <h4><ion-icon name="md-umbrella"></ion-icon> Chance of rain {{weather.chanceOfRain()}}</h4><br />
+            <h4>{{weather.today()}} <img height="30px" src="{{weather.todayIcon()}}" /></h4>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="weather.getAlert()" class="center">
+          <h5 class="red"><i class="material-icons">warning</i> {{weather.getAlert()}}</h5>
+        </ion-row>
       </ion-col>
-      <ion-col width-35>
-        <h4>Currently it is {{weather.getCurrently()}}</h4>
-        <h4><ion-icon name="md-umbrella"></ion-icon> {{weather.chanceOfRain()}}</h4><br />
-        <h4>{{weather.today()}} <img height="30px" src="{{weather.todayIcon()}}" /></h4>
-      </ion-col>
-      <ion-col width-15></ion-col>
-      <ion-col width-40 class="center">
+
+      <ion-col width-5></ion-col>
+      <ion-col width-45 class="center">
         <h1>{{time.getTime()}}</h1>
         <h2>{{time.getDate()}}</h2>
       </ion-col>

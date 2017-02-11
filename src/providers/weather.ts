@@ -68,6 +68,25 @@ export class Weather {
     }
   }
 
+  getAlert(){
+    if(this.weather){
+      if(this.weather.alerts.length > 0) {
+        let alert = this.weather.alerts[0];
+        let date = new Date(alert.expires * 1000);
+        let day = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        let hour = date.getHours();
+        let ampm = "AM";
+        if(date.getHours() > 12){
+          ampm = "PM";
+          hour -= 12;
+        }
+        return alert.title + " is in effect until " + day[date.getDay()] + " " + hour + " " + ampm;
+      }
+      return null;
+    }
+    return null;
+  }
+
   private weatherIcon(icon){
     switch(icon) {
       case "clear-day":
