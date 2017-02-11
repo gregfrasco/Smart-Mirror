@@ -12,7 +12,7 @@ export class Weather {
     private env:Env) {
     setInterval(() => {
       this.updateWeather();
-    },90000)
+    },90000);
   }
 
   init(){
@@ -23,7 +23,6 @@ export class Weather {
     this.http.get('https://api.darksky.net/forecast/'+this.env.env.FORCAST_API_KEY+"/"+this.env.env.FORCAST_LATLNG).map(res => res.json()).subscribe(
       (weather) => {
       this.weather = weather;
-      console.log(this.weather);
     });
   }
 

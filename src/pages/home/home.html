@@ -17,9 +17,7 @@
           <h5 class="red"><i class="material-icons">warning</i> {{weather.getAlert()}}</h5>
         </ion-row>
       </ion-col>
-
-      <ion-col width-5></ion-col>
-      <ion-col width-45 class="center">
+      <ion-col width-50 class="center">
         <h1>{{time.getTime()}}</h1>
         <h2>{{time.getDate()}}</h2>
       </ion-col>
@@ -30,12 +28,11 @@
       </ion-col>
       <ion-col width-30>
           <h1 class="orange"><i class="material-icons">directions_subway</i> Orange Line</h1>
-          <div>Forest Hills  1 min, 5 min</div>
-          <div>Oak Grove 3 min, 7 min</div>
+          <h6>Forest Hills  {{mbta.getTimes('Forest Hills')}}</h6>
+          <h6>Oak Grove {{mbta.getTimes('Oak Grove')}}</h6>
           <h1 class="green"><i class="material-icons">tram</i> Green Line</h1>
-          <div>Lechmere 4 min, 9 min</div>
-          <div>Heath Street 3 min, 5 min</div>
-          <div>Clieave Circle 2 min, 4 min</div>
+          <h6>Heath Street {{mbta.getTimes('Lechmere')}}</h6>
+          <h6>Cleveland Circle {{mbta.getTimes('Cleveland Circle')}}</h6>
       </ion-col>
     </ion-row>
   </ion-grid>

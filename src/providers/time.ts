@@ -21,12 +21,14 @@ export class Time {
 
   getTime() {
     let ampm;
+    let hours = this.date.getHours();
     if (this.date.getHours() > 12) {
+      hours -= 12;
       ampm = "PM";
     } else {
       ampm = "AM";
     }
-    return this.date.getHours() + ":" + ("0" + this.date.getMinutes()).slice(-2) + " " + ampm;
+    return hours + ":" + ("0" + this.date.getMinutes()).slice(-2) + " " + ampm;
   }
 
   getDate() {
