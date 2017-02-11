@@ -1,14 +1,34 @@
-<ion-header>
-  <ion-navbar>
-    <ion-title>
-      Ionic Blank
-    </ion-title>
-  </ion-navbar>
-</ion-header>
-
-<ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+<ion-content class="background">
+  <ion-grid>
+    <ion-row padding>
+      <ion-col width-10 class="center">
+          <img src="{{weather.getIcon()}}" />
+          <h2>{{weather.getTemp()}}</h2>
+      </ion-col>
+      <ion-col width-35>
+        <h4>Currently it is {{weather.getCurrently()}}</h4>
+        <h4><ion-icon name="md-umbrella"></ion-icon> {{weather.chanceOfRain()}}</h4><br />
+        <h4>{{weather.today()}} <img height="30px" src="{{weather.todayIcon()}}" /></h4>
+      </ion-col>
+      <ion-col width-15></ion-col>
+      <ion-col width-40 class="center">
+        <h1>{{time.getTime()}}</h1>
+        <h2>{{time.getDate()}}</h2>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col width-10>
+        <img src="assets/images/MBTA.png"/>
+      </ion-col>
+      <ion-col width-30>
+          <h1 class="orange"><i class="material-icons">directions_subway</i> Orange Line</h1>
+          <div>Forest Hills  1 min, 5 min</div>
+          <div>Oak Grove 3 min, 7 min</div>
+          <h1 class="green"><i class="material-icons">tram</i> Green Line</h1>
+          <div>Lechmere 4 min, 9 min</div>
+          <div>Heath Street 3 min, 5 min</div>
+          <div>Clieave Circle 2 min, 4 min</div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

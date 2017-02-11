@@ -2,6 +2,10 @@ import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
+import { MBTA } from '../providers/mbta';
+import { Time } from '../providers/time';
+import { Weather } from '../providers/weather';
+import { Env } from '../providers/env';
 
 @NgModule({
   declarations: [
@@ -16,6 +20,12 @@ import { HomePage } from '../pages/home/home';
     MyApp,
     HomePage
   ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]
+  providers: [
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    Env,
+    MBTA,
+    Time,
+    Weather
+  ]
 })
 export class AppModule {}
