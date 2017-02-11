@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">Smart Mirror</string>
-    <string name="dummy_button">Force Update</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="title_activity_main">Smart Mirror</string>
-</resources>
